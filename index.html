@@ -30,10 +30,10 @@
 }
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
 html, body { height:100%; overflow:hidden; background:var(--bg); color:var(--text); font-family:'IBM Plex Sans',sans-serif; }
-
+ 
 /* ── LAYOUT ── */
 #app { display:flex; flex-direction:column; height:100%; padding-top:var(--safe-top); }
-
+ 
 /* ── TOP BAR ── */
 .topbar {
   flex-shrink:0;
@@ -48,7 +48,7 @@ html, body { height:100%; overflow:hidden; background:var(--bg); color:var(--tex
 .topbar-right { display:flex; flex-direction:column; align-items:flex-end; gap:3px; }
 .race-countdown { font-family:'Bebas Neue',sans-serif; font-size:26px; color:var(--accent); line-height:1; }
 .race-label { font-family:'IBM Plex Mono',monospace; font-size:9px; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; }
-
+ 
 /* ── PROGRESS BAR ── */
 .progress-bar-wrap {
   flex-shrink:0;
@@ -60,7 +60,7 @@ html, body { height:100%; overflow:hidden; background:var(--bg); color:var(--tex
 .prog-track { flex:1; height:5px; background:var(--border); border-radius:3px; overflow:hidden; }
 .prog-fill { height:100%; background:var(--accent); border-radius:3px; transition:width 0.4s ease; }
 .prog-label { font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--muted2); white-space:nowrap; }
-
+ 
 /* ── TAB BAR ── */
 .tabs {
   flex-shrink:0;
@@ -86,7 +86,7 @@ html, body { height:100%; overflow:hidden; background:var(--bg); color:var(--tex
   white-space:nowrap;
 }
 .tab.active { color:var(--accent); border-bottom-color:var(--accent); }
-
+ 
 /* ── SCROLL AREA ── */
 .scroll-area {
   flex:1;
@@ -94,7 +94,7 @@ html, body { height:100%; overflow:hidden; background:var(--bg); color:var(--tex
   -webkit-overflow-scrolling:touch;
   padding-bottom:calc(16px + var(--safe-bot));
 }
-
+ 
 /* ── DASHBOARD ── */
 .dash-grid {
   display:grid;
@@ -108,7 +108,7 @@ html, body { height:100%; overflow:hidden; background:var(--bg); color:var(--tex
 .dash-stat-label { font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:0.12em; color:var(--muted); text-transform:uppercase; margin-bottom:4px; }
 .dash-stat-value { font-family:'Bebas Neue',sans-serif; font-size:28px; line-height:1; }
 .dash-stat-sub { font-size:10px; color:var(--muted2); margin-top:3px; }
-
+ 
 .current-week-card {
   margin:0 12px 12px;
   background:var(--card);
@@ -119,7 +119,7 @@ html, body { height:100%; overflow:hidden; background:var(--bg); color:var(--tex
 .cwc-label { font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:0.12em; color:var(--accent); text-transform:uppercase; margin-bottom:6px; }
 .cwc-title { font-family:'Bebas Neue',sans-serif; font-size:20px; line-height:1; margin-bottom:4px; }
 .cwc-runs { font-size:12px; color:var(--muted2); line-height:1.5; }
-
+ 
 .streak-card {
   margin:0 12px 12px;
   background:var(--card);
@@ -131,7 +131,7 @@ html, body { height:100%; overflow:hidden; background:var(--bg); color:var(--tex
 .streak-right {}
 .streak-title { font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted2); }
 .streak-sub { font-size:12px; color:var(--muted); margin-top:4px; }
-
+ 
 /* ── WEEK CARDS ── */
 .phase-label {
   margin:16px 12px 8px;
@@ -150,7 +150,7 @@ html, body { height:100%; overflow:hidden; background:var(--bg); color:var(--tex
   letter-spacing:0.08em;
   text-transform:uppercase;
 }
-
+ 
 .week-card {
   margin:0 12px 8px;
   background:var(--card);
@@ -161,7 +161,7 @@ html, body { height:100%; overflow:hidden; background:var(--bg); color:var(--tex
 }
 .week-card.complete { border-color:#2a4a2a; }
 .week-card.active { border-color:var(--accent); }
-
+ 
 .week-header {
   display:flex; align-items:center; justify-content:space-between;
   padding:10px 14px;
@@ -188,10 +188,10 @@ html, body { height:100%; overflow:hidden; background:var(--bg); color:var(--tex
 .wdot.done { background:#4caf50; }
 .chevron { font-size:10px; color:var(--muted); transition:transform 0.2s; }
 .week-card.open .chevron { transform:rotate(180deg); }
-
+ 
 .week-body { display:none; padding:6px 14px 12px; }
 .week-card.open .week-body { display:block; }
-
+ 
 .run-item {
   display:flex; align-items:flex-start; gap:10px;
   padding:9px 0;
@@ -202,7 +202,7 @@ html, body { height:100%; overflow:hidden; background:var(--bg); color:var(--tex
 }
 .run-item:last-child { border-bottom:none; }
 .run-item.done { opacity:0.5; }
-
+ 
 .run-check {
   width:20px; height:20px; border-radius:3px;
   border:1.5px solid var(--border);
@@ -214,7 +214,7 @@ html, body { height:100%; overflow:hidden; background:var(--bg); color:var(--tex
 .run-item.done .run-check { background:#4caf50; border-color:#4caf50; }
 .run-check-icon { display:none; color:#fff; font-size:12px; }
 .run-item.done .run-check-icon { display:block; }
-
+ 
 .run-content {}
 .run-tag-sm {
   display:inline-block;
@@ -235,7 +235,7 @@ html, body { height:100%; overflow:hidden; background:var(--bg); color:var(--tex
 .rtag-race { background:rgba(232,255,58,0.25); color:var(--accent); border:1px solid var(--accent); }
 .run-title-sm { font-size:12px; color:var(--text); font-weight:600; margin-bottom:2px; }
 .run-desc-sm { font-size:11px; color:var(--muted2); line-height:1.45; }
-
+ 
 /* ── PACING TAB ── */
 .pace-section { padding:12px; }
 .pace-card {
@@ -247,7 +247,7 @@ html, body { height:100%; overflow:hidden; background:var(--bg); color:var(--tex
 .pace-zone-label { font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted2); margin-bottom:4px; }
 .pace-val { font-family:'Bebas Neue',sans-serif; font-size:32px; line-height:1; margin-bottom:6px; }
 .pace-desc-text { font-size:12px; color:var(--muted2); line-height:1.5; }
-
+ 
 /* ── SUPPLEMENTAL TAB ── */
 .supp-section { padding:12px; }
 .supp-card-m {
@@ -271,7 +271,7 @@ html, body { height:100%; overflow:hidden; background:var(--bg); color:var(--tex
 .supp-card-m.open .supp-body-m { display:block; }
 .supp-chevron { margin-left:auto; font-size:10px; color:var(--muted); transition:transform 0.2s; }
 .supp-card-m.open .supp-chevron { transform:rotate(180deg); }
-
+ 
 .supp-group-m { margin-bottom:12px; }
 .supp-group-label-m { font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:0.1em; text-transform:uppercase; padding-bottom:6px; border-bottom:1px solid #1f1f1f; margin-bottom:8px; }
 .ex-item { padding:8px 10px; background:var(--surface); margin-bottom:4px; border-left:2px solid #2a2a2a; }
@@ -284,7 +284,7 @@ html, body { height:100%; overflow:hidden; background:var(--bg); color:var(--tex
   border:1px solid rgba(232,255,58,0.1);
   line-height:1.5; margin-top:8px;
 }
-
+ 
 /* ── RESET BUTTON ── */
 .reset-wrap { padding:20px 12px 0; }
 .reset-btn {
@@ -295,7 +295,7 @@ html, body { height:100%; overflow:hidden; background:var(--bg); color:var(--tex
   cursor:pointer; border-radius:2px;
 }
 .reset-btn:active { background:#3a2020; }
-
+ 
 /* ── MISC ── */
 .empty-state { text-align:center; padding:40px 20px; color:var(--muted); font-size:13px; }
 .complete-banner {
@@ -309,7 +309,7 @@ html, body { height:100%; overflow:hidden; background:var(--bg); color:var(--tex
   display:none;
 }
 .week-card.complete .complete-banner { display:block; }
-
+ 
 </style>
 </head>
 <body>
@@ -324,12 +324,12 @@ html, body { height:100%; overflow:hidden; background:var(--bg); color:var(--tex
       <div class="race-label">DAYS TO RACE</div>
     </div>
   </div>
-
+ 
   <div class="progress-bar-wrap">
     <div class="prog-track"><div class="prog-fill" id="masterFill" style="width:0%"></div></div>
     <div class="prog-label" id="masterLabel">0 / 0 runs</div>
   </div>
-
+ 
   <div class="tabs">
     <div class="tab active" data-tab="dashboard">Dashboard</div>
     <div class="tab" data-tab="plan">Training Plan</div>
@@ -337,24 +337,24 @@ html, body { height:100%; overflow:hidden; background:var(--bg); color:var(--tex
     <div class="tab" data-tab="fitness">Fitness</div>
     <div class="tab" data-tab="supplemental">Supplemental</div>
   </div>
-
+ 
   <div class="scroll-area" id="scrollArea">
     <!-- content injected by JS -->
   </div>
 </div>
-
+ 
 <script>
 // ─────────────────────────────────────────────
 // DATA
 // ─────────────────────────────────────────────
 const RACE_DATE = new Date('2026-12-13T07:00:00');
-
+ 
 const PHASES = [
   { id:'p1', label:'Phase 1 — Base Building', color:'#3af0e8', badge:'Jun 5 – Sep 7 · 3x/week', desc:'Rebuild aerobic engine. Almost entirely Zone 2. VO2max intervals start Week 5. Long run grows to 14 miles.' },
   { id:'p2', label:'Phase 2 — Race Build', color:'#ff6b35', badge:'Sep 8 – Nov 16 · 4–5x/week', desc:'Introduce marathon pace tempo. VO2max continues. Long runs peak at 22 miles.' },
   { id:'p3', label:'Phase 3 — Taper', color:'#e8ff3a', badge:'Nov 17 – Dec 13 · 3.5 weeks', desc:'Drop volume, keep intensity. Trust the work.' }
 ];
-
+ 
 const WEEKS = [
   // Phase 1
   { id:'w1', phase:'p1', label:'Week 1', dates:'Jun 5', miles:'11', runs:[
@@ -514,7 +514,7 @@ const WEEKS = [
     {id:'w28r4',tag:'race',title:'RACE DAY 🏁',desc:'Dec 13 · Goal: sub-3:30 · Start 15s/mi slow, trust the build'}
   ]}
 ];
-
+ 
 const PACES = [
   { zone:'Zone 2 Easy', color:'#3af0e8', val:'9:30–11:00', desc:'Fully conversational. If you can\'t hold a sentence, slow down. In Texas summer, this might feel embarrassingly slow — that\'s correct.' },
   { zone:'Long Run', color:'#b47fff', val:'10:00–11:30', desc:'Same as Zone 2 or slower. Finish feeling like you could do 3 more miles. Never race your long runs.' },
@@ -523,7 +523,7 @@ const PACES = [
   { zone:'Strides', color:'#ffc864', val:'6:30–7:00', desc:'20 sec, controlled acceleration. Not a full sprint. Full recovery between each. Keeps neuromuscular sharpness during taper.' },
   { zone:'Race Day Start', color:'#e8ff3a', val:'8:15–8:20', desc:'First 5 miles SLOWER than goal pace. Non-negotiable. Miles 6–18 controlled. Save something for 18–22.' }
 ];
-
+ 
 const SUPP = [
   {
     id:'stretch', icon:'🦵', title:'Daily Stretching', freq:'Every day · ~10 min · post-run or evening', color:'#3af0e8',
@@ -644,25 +644,25 @@ const SUPP = [
     note:'Nutrition is the easiest variable to control and the most neglected. If your runs feel flat, check food and sleep before adding mileage.'
   }
 ];
-
+ 
 // ─────────────────────────────────────────────
 // STATE
 // ─────────────────────────────────────────────
 const STORAGE_KEY = 'marathon_tracker_v1';
-
+ 
 function loadState() {
   try {
     const s = localStorage.getItem(STORAGE_KEY);
     return s ? JSON.parse(s) : { done: {}, openWeeks: {}, openSupp: {}, fitness: [] };
   } catch { return { done: {}, openWeeks: {}, openSupp: {}, fitness: [] }; }
 }
-
+ 
 function saveState(s) {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch {}
 }
-
+ 
 let STATE = loadState();
-
+ 
 // ─────────────────────────────────────────────
 // HELPERS
 // ─────────────────────────────────────────────
@@ -670,7 +670,7 @@ function totalRuns() { return WEEKS.reduce((a,w) => a + w.runs.length, 0); }
 function completedRuns() { return Object.values(STATE.done).filter(Boolean).length; }
 function weekDone(w) { return w.runs.every(r => STATE.done[r.id]); }
 function weekProgress(w) { return w.runs.filter(r => STATE.done[r.id]).length; }
-
+ 
 function currentWeek() {
   const now = new Date();
   for (const w of WEEKS) {
@@ -681,20 +681,20 @@ function currentWeek() {
   }
   return WEEKS[0];
 }
-
+ 
 function parseWeekDate(str) {
   const months = {Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
   const m = str.match(/([A-Za-z]+)\s+(\d+)/);
   if (!m) return new Date('2026-06-05');
   return new Date(2026, months[m[1]], parseInt(m[2]));
 }
-
+ 
 function daysToRace() {
   const now = new Date();
   const diff = Math.ceil((RACE_DATE - now) / (1000*60*60*24));
   return Math.max(0, diff);
 }
-
+ 
 function weekStreak() {
   let streak = 0;
   for (let i = WEEKS.length-1; i >= 0; i--) {
@@ -703,12 +703,12 @@ function weekStreak() {
   }
   return streak;
 }
-
+ 
 // ─────────────────────────────────────────────
 // RENDER
 // ─────────────────────────────────────────────
 let currentTab = 'dashboard';
-
+ 
 function render() {
   document.getElementById('countdown').textContent = daysToRace();
   const total = totalRuns();
@@ -716,17 +716,17 @@ function render() {
   const pct = total ? Math.round((comp/total)*100) : 0;
   document.getElementById('masterFill').style.width = pct + '%';
   document.getElementById('masterLabel').textContent = `${comp} / ${total} runs · ${pct}%`;
-
+ 
   const area = document.getElementById('scrollArea');
   if (currentTab === 'dashboard') area.innerHTML = renderDashboard();
   else if (currentTab === 'plan') area.innerHTML = renderPlan();
   else if (currentTab === 'pacing') area.innerHTML = renderPacing();
   else if (currentTab === 'fitness') area.innerHTML = renderFitness();
   else if (currentTab === 'supplemental') area.innerHTML = renderSupp();
-
+ 
   bindEvents();
 }
-
+ 
 function renderDashboard() {
   const cur = currentWeek();
   const comp = completedRuns();
@@ -734,7 +734,7 @@ function renderDashboard() {
   const wComp = WEEKS.filter(weekDone).length;
   const pct = total ? Math.round((comp/total)*100) : 0;
   const streak = weekStreak();
-
+ 
   // Miles logged
   let milesLogged = 0;
   WEEKS.forEach(w => {
@@ -742,7 +742,7 @@ function renderDashboard() {
     const totalR = w.runs.length;
     if (totalR > 0) milesLogged += (doneCount / totalR) * parseFloat(w.miles);
   });
-
+ 
   return `
     <div class="dash-grid">
       <div class="dash-stat">
@@ -766,13 +766,13 @@ function renderDashboard() {
         <div class="dash-stat-sub">Dec 13, 2026</div>
       </div>
     </div>
-
+ 
     <div class="current-week-card">
       <div class="cwc-label">Current Week</div>
       <div class="cwc-title">${cur.label} · ${cur.dates}</div>
       <div class="cwc-runs">${cur.runs.map(r => `${r.title}: ${r.desc}`).join('<br>')}</div>
     </div>
-
+ 
     ${streak > 0 ? `
     <div class="streak-card">
       <div class="streak-num">${streak}</div>
@@ -781,7 +781,7 @@ function renderDashboard() {
         <div class="streak-sub">consecutive complete weeks</div>
       </div>
     </div>` : ''}
-
+ 
     <div style="padding:0 12px">
       <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.12em;color:var(--muted);text-transform:uppercase;margin-bottom:8px">Phase Progress</div>
       ${PHASES.map(p => {
@@ -800,17 +800,17 @@ function renderDashboard() {
         </div>`;
       }).join('')}
     </div>
-
+ 
     <div class="reset-wrap">
       <button class="reset-btn" id="resetBtn">⚠ Reset All Progress</button>
     </div>
   `;
 }
-
+ 
 function renderPlan() {
   let html = '';
   let curPhase = null;
-
+ 
   WEEKS.forEach(w => {
     if (w.phase !== curPhase) {
       curPhase = w.phase;
@@ -824,12 +824,12 @@ function renderPlan() {
           <div class="phase-desc" style="font-size:12px;color:var(--muted);font-style:italic">${p.desc}</div>
         </div>`;
     }
-
+ 
     const done = weekDone(w);
     const prog = weekProgress(w);
     const isOpen = STATE.openWeeks[w.id];
     const isCurrent = currentWeek().id === w.id;
-
+ 
     html += `
       <div class="week-card ${done?'complete':''} ${isCurrent&&!done?'active':''} ${isOpen?'open':''}" data-week="${w.id}">
         <div class="week-header" data-toggle="week" data-id="${w.id}">
@@ -863,10 +863,10 @@ function renderPlan() {
         </div>
       </div>`;
   });
-
+ 
   return html;
 }
-
+ 
 function renderPacing() {
   return `<div class="pace-section">
     <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.1em;margin-bottom:12px">
@@ -881,7 +881,7 @@ function renderPacing() {
     `).join('')}
   </div>`;
 }
-
+ 
 function renderSupp() {
   return `<div class="supp-section">
     ${SUPP.map(s => `
@@ -912,15 +912,15 @@ function renderSupp() {
     `).join('')}
   </div>`;
 }
-
+ 
 function renderFitness() {
   if (!STATE.fitness) STATE.fitness = [];
   const entries = [...STATE.fitness].sort((a,b) => new Date(b.date) - new Date(a.date));
-
+ 
   // Latest values for display
   const latestVO2 = entries.find(e => e.vo2 != null);
   const latest5k  = entries.find(e => e.fiveK != null);
-
+ 
   function fiveKtoPace(total) {
     // total = "MM:SS" or "H:MM:SS" — returns "/mi pace string"
     const parts = total.split(':').map(Number);
@@ -933,7 +933,7 @@ function renderFitness() {
     const ps = Math.round(paceSecs % 60).toString().padStart(2,'0');
     return `${pm}:${ps}/mi`;
   }
-
+ 
   function predictMarathon(vo2) {
     // Rough VO2max → marathon time estimate (Daniels formula approximation)
     // vdot table: VO2 51→~3:42, 54→~3:29, 57→~3:17, 60→~3:05
@@ -942,10 +942,10 @@ function renderFitness() {
     const m = mins % 60;
     return `${h}:${m.toString().padStart(2,'0')}`;
   }
-
+ 
   return `
   <div style="padding:12px">
-
+ 
     <!-- Current bests -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:12px">
       <div style="background:var(--card);padding:14px 16px">
@@ -959,24 +959,24 @@ function renderFitness() {
         <div style="font-size:10px;color:var(--muted2);margin-top:3px">${latest5k ? `finish: ${latest5k.fiveK}` : 'baseline estimate'}</div>
       </div>
     </div>
-
+ 
     ${latestVO2 ? `
     <div style="background:var(--card);border:1px solid var(--border);border-left:3px solid var(--accent);padding:12px 14px;margin-bottom:12px">
       <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;margin-bottom:4px">Predicted Marathon (VO2 ${latestVO2.vo2})</div>
       <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--tempo);line-height:1">${predictMarathon(parseFloat(latestVO2.vo2))}</div>
       <div style="font-size:11px;color:var(--muted2);margin-top:4px">Rough estimate · actual fitness > formula · goal is sub-3:30</div>
     </div>` : ''}
-
+ 
     <!-- Log entry form -->
     <div style="background:var(--card);border:1px solid var(--border);padding:14px 16px;margin-bottom:12px">
       <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.12em;color:var(--accent);text-transform:uppercase;margin-bottom:12px">Log New Entry</div>
-
+ 
       <div style="margin-bottom:10px">
         <label style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);display:block;margin-bottom:4px;letter-spacing:0.08em">DATE</label>
         <input id="fitDate" type="date" value="${new Date().toISOString().split('T')[0]}"
           style="width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:8px 10px;font-family:'IBM Plex Mono',monospace;font-size:12px;border-radius:2px;-webkit-appearance:none">
       </div>
-
+ 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
         <div>
           <label style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);display:block;margin-bottom:4px;letter-spacing:0.08em">VO2MAX (optional)</label>
@@ -989,20 +989,20 @@ function renderFitness() {
             style="width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:8px 10px;font-family:'IBM Plex Mono',monospace;font-size:14px;border-radius:2px">
         </div>
       </div>
-
+ 
       <div style="margin-bottom:12px">
         <label style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);display:block;margin-bottom:4px;letter-spacing:0.08em">NOTES (optional)</label>
         <input id="fitNotes" type="text" placeholder="e.g. Garmin race predictor, hot day, etc"
           style="width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:8px 10px;font-family:'IBM Plex Mono',monospace;font-size:12px;border-radius:2px">
       </div>
-
+ 
       <button id="fitSaveBtn"
         style="width:100%;padding:10px;background:var(--accent);color:#0d0d0d;border:none;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;font-weight:600;cursor:pointer;border-radius:2px">
         Save Entry
       </button>
       <div id="fitMsg" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#4caf50;margin-top:8px;display:none;text-align:center">✓ Saved</div>
     </div>
-
+ 
     <!-- History -->
     ${entries.length > 0 ? `
     <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.12em;color:var(--muted);text-transform:uppercase;margin-bottom:8px">History</div>
@@ -1020,10 +1020,10 @@ function renderFitness() {
       </div>
     `).join('')}` : `
     <div style="text-align:center;padding:24px;color:var(--muted);font-size:13px">No entries yet — log your first reading above</div>`}
-
+ 
   </div>`;
 }
-
+ 
 // ─────────────────────────────────────────────
 // EVENTS
 // ─────────────────────────────────────────────
@@ -1038,7 +1038,7 @@ function bindEvents() {
       document.getElementById('scrollArea').scrollTop = 0;
     };
   });
-
+ 
   // Week toggles
   document.querySelectorAll('[data-toggle="week"]').forEach(el => {
     el.onclick = () => {
@@ -1048,7 +1048,7 @@ function bindEvents() {
       render();
     };
   });
-
+ 
   // Run checkboxes
   document.querySelectorAll('[data-run]').forEach(el => {
     el.onclick = (e) => {
@@ -1059,7 +1059,7 @@ function bindEvents() {
       render();
     };
   });
-
+ 
   // Supp toggles
   document.querySelectorAll('[data-toggle="supp"]').forEach(el => {
     el.onclick = () => {
@@ -1069,7 +1069,7 @@ function bindEvents() {
       render();
     };
   });
-
+ 
   // Fitness save
   const fsb = document.getElementById('fitSaveBtn');
   if (fsb) fsb.onclick = () => {
@@ -1090,7 +1090,7 @@ function bindEvents() {
     if (msg) { msg.style.display='block'; setTimeout(()=>{ msg.style.display='none'; },1500); }
     render();
   };
-
+ 
   // Fitness delete
   document.querySelectorAll('[data-del]').forEach(btn => {
     btn.onclick = () => {
@@ -1112,12 +1112,12 @@ function bindEvents() {
     }
   };
 }
-
+ 
 // ─────────────────────────────────────────────
 // INIT
 // ─────────────────────────────────────────────
 render();
-
+ 
 // Register service worker
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').catch(() => {});
@@ -1125,3 +1125,4 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+ 
