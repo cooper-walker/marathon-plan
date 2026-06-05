@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Marathon">
+<meta name="theme-color" content="#0d0d0d">
+<title>Marathon Dec 13</title>
+<link rel="manifest" href="./manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d0d0d;
+  --surface: #141414;
+  --card: #1a1a1a;
+  --border: #2a2a2a;
+  --accent: #e8ff3a;
+  --text: #e8e4dc;
+  --muted: #555;
+  --muted2: #888;
+  --z2: #3af0e8;
+  --tempo: #ff6b35;
+  --vo2: #e8ff3a;
+  --long: #b47fff;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bot: env(safe-area-inset-bottom, 0px);
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+html, body { height:100%; overflow:hidden; background:var(--bg); color:var(--text); font-family:'IBM Plex Sans',sans-serif; }
+
+/* ── LAYOUT ── */
+#app { display:flex; flex-direction:column; height:100%; padding-top:var(--safe-top); }
+
+/* ── TOP BAR ── */
+.topbar {
+  flex-shrink:0;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 16px 10px;
+  border-bottom:1px solid var(--border);
+  background:var(--bg);
+}
+.topbar-left { display:flex; flex-direction:column; }
+.topbar-title { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:0.05em; line-height:1; }
+.topbar-sub { font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--muted2); letter-spacing:0.1em; margin-top:2px; }
+.topbar-right { display:flex; flex-direction:column; align-items:flex-end; gap:3px; }
+.race-countdown { font-family:'Bebas Neue',sans-serif; font-size:26px; color:var(--accent); line-height:1; }
+.race-label { font-family:'IBM Plex Mono',monospace; font-size:9px; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; }
+
+/* ── PROGRESS BAR ── */
+.progress-bar-wrap {
+  flex-shrink:0;
+  padding:8px 16px;
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:center; gap:10px;
+}
+.prog-track { flex:1; height:5px; background:var(--border); border-radius:3px; overflow:hidden; }
+.prog-fill { height:100%; background:var(--accent); border-radius:3px; transition:width 0.4s ease; }
+.prog-label { font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--muted2); white-space:nowrap; }
+
+/* ── TAB BAR ── */
+.tabs {
+  flex-shrink:0;
+  display:flex;
+  border-bottom:1px solid var(--border);
+  background:var(--bg);
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.tabs::-webkit-scrollbar { display:none; }
+.tab {
+  flex-shrink:0;
+  padding:10px 14px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--muted);
+  cursor:pointer;
+  border-bottom:2px solid transparent;
+  transition:color 0.15s, border-color 0.15s;
+  user-select:none;
+  white-space:nowrap;
+}
+.tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+
+/* ── SCROLL AREA ── */
+.scroll-area {
+  flex:1;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  padding-bottom:calc(16px + var(--safe-bot));
+}
+
+/* ── DASHBOARD ── */
+.dash-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1px;
+  background:var(--border);
+  margin:12px;
+  border:1px solid var(--border);
+}
+.dash-stat { background:var(--card); padding:14px 16px; }
+.dash-stat-label { font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:0.12em; color:var(--muted); text-transform:uppercase; margin-bottom:4px; }
+.dash-stat-value { font-family:'Bebas Neue',sans-serif; font-size:28px; line-height:1; }
+.dash-stat-sub { font-size:10px; color:var(--muted2); margin-top:3px; }
+
+.current-week-card {
+  margin:0 12px 12px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-left:3px solid var(--accent);
+  padding:14px 16px;
+}
+.cwc-label { font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:0.12em; color:var(--accent); text-transform:uppercase; margin-bottom:6px; }
+.cwc-title { font-family:'Bebas Neue',sans-serif; font-size:20px; line-height:1; margin-bottom:4px; }
+.cwc-runs { font-size:12px; color:var(--muted2); line-height:1.5; }
+
+.streak-card {
+  margin:0 12px 12px;
+  background:var(--card);
+  border:1px solid var(--border);
+  padding:14px 16px;
+  display:flex; align-items:center; gap:16px;
+}
+.streak-num { font-family:'Bebas Neue',sans-serif; font-size:48px; line-height:1; color:var(--tempo); }
+.streak-right {}
+.streak-title { font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted2); }
+.streak-sub { font-size:12px; color:var(--muted); margin-top:4px; }
+
+/* ── WEEK CARDS ── */
+.phase-label {
+  margin:16px 12px 8px;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:20px;
+  letter-spacing:0.05em;
+  padding-bottom:6px;
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:baseline; gap:10px;
+}
+.phase-badge-sm {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:9px;
+  padding:2px 8px;
+  border-radius:2px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+}
+
+.week-card {
+  margin:0 12px 8px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:2px;
+  overflow:hidden;
+  transition:border-color 0.2s;
+}
+.week-card.complete { border-color:#2a4a2a; }
+.week-card.active { border-color:var(--accent); }
+
+.week-header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 14px;
+  cursor:pointer;
+  user-select:none;
+  background:var(--surface);
+}
+.week-header-left { display:flex; align-items:center; gap:10px; }
+.week-num-badge {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;
+  font-weight:600;
+  color:var(--muted);
+  min-width:28px;
+}
+.week-card.active .week-num-badge { color:var(--accent); }
+.week-title-wrap {}
+.week-title { font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:600; color:var(--text); letter-spacing:0.05em; }
+.week-dates-sm { font-size:10px; color:var(--muted); margin-top:1px; }
+.week-right { display:flex; align-items:center; gap:8px; }
+.week-miles { font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--muted2); }
+.week-progress-dots { display:flex; gap:3px; }
+.wdot { width:7px; height:7px; border-radius:2px; background:var(--border); transition:background 0.2s; }
+.wdot.done { background:#4caf50; }
+.chevron { font-size:10px; color:var(--muted); transition:transform 0.2s; }
+.week-card.open .chevron { transform:rotate(180deg); }
+
+.week-body { display:none; padding:6px 14px 12px; }
+.week-card.open .week-body { display:block; }
+
+.run-item {
+  display:flex; align-items:flex-start; gap:10px;
+  padding:9px 0;
+  border-bottom:1px solid #1f1f1f;
+  cursor:pointer;
+  user-select:none;
+  transition:opacity 0.15s;
+}
+.run-item:last-child { border-bottom:none; }
+.run-item.done { opacity:0.5; }
+
+.run-check {
+  width:20px; height:20px; border-radius:3px;
+  border:1.5px solid var(--border);
+  flex-shrink:0;
+  margin-top:2px;
+  display:flex; align-items:center; justify-content:center;
+  transition:background 0.15s, border-color 0.15s;
+}
+.run-item.done .run-check { background:#4caf50; border-color:#4caf50; }
+.run-check-icon { display:none; color:#fff; font-size:12px; }
+.run-item.done .run-check-icon { display:block; }
+
+.run-content {}
+.run-tag-sm {
+  display:inline-block;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:9px; font-weight:600;
+  letter-spacing:0.08em;
+  padding:2px 6px;
+  border-radius:2px;
+  text-transform:uppercase;
+  margin-bottom:3px;
+}
+.rtag-z2 { background:rgba(58,240,232,0.12); color:var(--z2); }
+.rtag-vo2 { background:rgba(232,255,58,0.12); color:var(--vo2); }
+.rtag-tempo { background:rgba(255,107,53,0.12); color:var(--tempo); }
+.rtag-long { background:rgba(180,127,255,0.12); color:var(--long); }
+.rtag-rest { background:rgba(80,80,80,0.2); color:var(--muted); }
+.rtag-strides { background:rgba(255,200,100,0.12); color:#ffc864; }
+.rtag-race { background:rgba(232,255,58,0.25); color:var(--accent); border:1px solid var(--accent); }
+.run-title-sm { font-size:12px; color:var(--text); font-weight:600; margin-bottom:2px; }
+.run-desc-sm { font-size:11px; color:var(--muted2); line-height:1.45; }
+
+/* ── PACING TAB ── */
+.pace-section { padding:12px; }
+.pace-card {
+  background:var(--card);
+  border:1px solid var(--border);
+  padding:16px;
+  margin-bottom:8px;
+}
+.pace-zone-label { font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted2); margin-bottom:4px; }
+.pace-val { font-family:'Bebas Neue',sans-serif; font-size:32px; line-height:1; margin-bottom:6px; }
+.pace-desc-text { font-size:12px; color:var(--muted2); line-height:1.5; }
+
+/* ── SUPPLEMENTAL TAB ── */
+.supp-section { padding:12px; }
+.supp-card-m {
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:2px;
+  margin-bottom:8px;
+  overflow:hidden;
+}
+.supp-head-m {
+  display:flex; align-items:center; gap:10px;
+  padding:12px 14px;
+  background:var(--surface);
+  border-left:3px solid;
+  cursor:pointer; user-select:none;
+}
+.supp-icon-m { font-size:18px; }
+.supp-title-m { font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:0.04em; line-height:1; }
+.supp-freq-m { font-family:'IBM Plex Mono',monospace; font-size:9px; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase; margin-top:2px; }
+.supp-body-m { display:none; padding:10px 14px 14px; }
+.supp-card-m.open .supp-body-m { display:block; }
+.supp-chevron { margin-left:auto; font-size:10px; color:var(--muted); transition:transform 0.2s; }
+.supp-card-m.open .supp-chevron { transform:rotate(180deg); }
+
+.supp-group-m { margin-bottom:12px; }
+.supp-group-label-m { font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:0.1em; text-transform:uppercase; padding-bottom:6px; border-bottom:1px solid #1f1f1f; margin-bottom:8px; }
+.ex-item { padding:8px 10px; background:var(--surface); margin-bottom:4px; border-left:2px solid #2a2a2a; }
+.ex-name-m { font-size:12px; font-weight:600; color:var(--text); margin-bottom:2px; }
+.ex-detail-m { font-size:11px; color:var(--muted2); line-height:1.45; }
+.supp-note-m {
+  font-family:'IBM Plex Mono',monospace; font-size:10px;
+  color:var(--accent); padding:8px 10px;
+  background:rgba(232,255,58,0.04);
+  border:1px solid rgba(232,255,58,0.1);
+  line-height:1.5; margin-top:8px;
+}
+
+/* ── RESET BUTTON ── */
+.reset-wrap { padding:20px 12px 0; }
+.reset-btn {
+  width:100%; padding:11px;
+  background:transparent; border:1px solid #3a2020;
+  color:#8b3a3a; font-family:'IBM Plex Mono',monospace;
+  font-size:11px; letter-spacing:0.1em; text-transform:uppercase;
+  cursor:pointer; border-radius:2px;
+}
+.reset-btn:active { background:#3a2020; }
+
+/* ── MISC ── */
+.empty-state { text-align:center; padding:40px 20px; color:var(--muted); font-size:13px; }
+.complete-banner {
+  margin:0 12px 8px;
+  background:rgba(76,175,80,0.1);
+  border:1px solid rgba(76,175,80,0.3);
+  padding:10px 14px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px; color:#4caf50;
+  letter-spacing:0.05em;
+  display:none;
+}
+.week-card.complete .complete-banner { display:block; }
+
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title">26.2 · DEC 13</div>
+      <div class="topbar-sub">SUB-3:30 · VO2MAX 51 · CENTRAL TX</div>
+    </div>
+    <div class="topbar-right">
+      <div class="race-countdown" id="countdown">—</div>
+      <div class="race-label">DAYS TO RACE</div>
+    </div>
+  </div>
+
+  <div class="progress-bar-wrap">
+    <div class="prog-track"><div class="prog-fill" id="masterFill" style="width:0%"></div></div>
+    <div class="prog-label" id="masterLabel">0 / 0 runs</div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="dashboard">Dashboard</div>
+    <div class="tab" data-tab="plan">Training Plan</div>
+    <div class="tab" data-tab="pacing">Pacing</div>
+    <div class="tab" data-tab="supplemental">Supplemental</div>
+  </div>
+
+  <div class="scroll-area" id="scrollArea">
+    <!-- content injected by JS -->
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// DATA
+// ─────────────────────────────────────────────
+const RACE_DATE = new Date('2025-12-13T07:00:00');
+
+const PHASES = [
+  { id:'p1', label:'Phase 1 — Base Building', color:'#3af0e8', badge:'Jun 5 – Sep 7 · 3x/week', desc:'Rebuild aerobic engine. Almost entirely Zone 2. VO2max intervals start Week 5. Long run grows to 14 miles.' },
+  { id:'p2', label:'Phase 2 — Race Build', color:'#ff6b35', badge:'Sep 8 – Nov 16 · 4–5x/week', desc:'Introduce marathon pace tempo. VO2max continues. Long runs peak at 22 miles.' },
+  { id:'p3', label:'Phase 3 — Taper', color:'#e8ff3a', badge:'Nov 17 – Dec 13 · 3.5 weeks', desc:'Drop volume, keep intensity. Trust the work.' }
+];
+
+const WEEKS = [
+  // Phase 1
+  { id:'w1', phase:'p1', label:'Week 1', dates:'Jun 5', miles:'11', runs:[
+    {id:'w1r1',tag:'z2',title:'Zone 2 Easy',desc:'3 mi easy · conversational pace'},
+    {id:'w1r2',tag:'z2',title:'Zone 2 Easy',desc:'3 mi easy'},
+    {id:'w1r3',tag:'long',title:'Long Run',desc:'5 mi easy ~10:30 pace'}
+  ]},
+  { id:'w2', phase:'p1', label:'Week 2', dates:'Jun 12', miles:'13', runs:[
+    {id:'w2r1',tag:'z2',title:'Zone 2 Easy',desc:'3 mi easy'},
+    {id:'w2r2',tag:'z2',title:'Zone 2 Easy',desc:'4 mi easy'},
+    {id:'w2r3',tag:'long',title:'Long Run',desc:'6 mi easy'}
+  ]},
+  { id:'w3', phase:'p1', label:'Week 3', dates:'Jun 19', miles:'15', runs:[
+    {id:'w3r1',tag:'z2',title:'Zone 2 Easy',desc:'4 mi easy'},
+    {id:'w3r2',tag:'z2',title:'Zone 2 Easy',desc:'4 mi easy'},
+    {id:'w3r3',tag:'long',title:'Long Run',desc:'7 mi easy'}
+  ]},
+  { id:'w4', phase:'p1', label:'Week 4 ↓ Cutback', dates:'Jun 26', miles:'14', runs:[
+    {id:'w4r1',tag:'z2',title:'Zone 2 Easy',desc:'4 mi easy'},
+    {id:'w4r2',tag:'z2',title:'Zone 2 Easy',desc:'4 mi easy'},
+    {id:'w4r3',tag:'long',title:'Long Run',desc:'6 mi easy · cutback week'}
+  ]},
+  { id:'w5', phase:'p1', label:'Week 5', dates:'Jul 3', miles:'16', runs:[
+    {id:'w5r1',tag:'vo2',title:'VO2max Intervals',desc:'5×3min @ hard effort, 90s jog rest · 1mi warm/cool'},
+    {id:'w5r2',tag:'z2',title:'Zone 2 Easy',desc:'4 mi easy'},
+    {id:'w5r3',tag:'long',title:'Long Run',desc:'8 mi easy'}
+  ]},
+  { id:'w6', phase:'p1', label:'Week 6', dates:'Jul 10', miles:'18', runs:[
+    {id:'w6r1',tag:'vo2',title:'VO2max Intervals',desc:'6×3min @ hard, 90s jog rest'},
+    {id:'w6r2',tag:'z2',title:'Zone 2 Easy',desc:'5 mi easy'},
+    {id:'w6r3',tag:'long',title:'Long Run',desc:'9 mi easy'}
+  ]},
+  { id:'w7', phase:'p1', label:'Week 7', dates:'Jul 17', miles:'19', runs:[
+    {id:'w7r1',tag:'vo2',title:'VO2max Intervals',desc:'5×4min @ hard, 2min jog rest'},
+    {id:'w7r2',tag:'z2',title:'Zone 2 Easy',desc:'5 mi easy'},
+    {id:'w7r3',tag:'long',title:'Long Run',desc:'10 mi easy'}
+  ]},
+  { id:'w8', phase:'p1', label:'Week 8 ↓ Cutback', dates:'Jul 24', miles:'17', runs:[
+    {id:'w8r1',tag:'z2',title:'Zone 2 Easy',desc:'5 mi easy · cutback week'},
+    {id:'w8r2',tag:'z2',title:'Zone 2 Easy',desc:'4 mi easy'},
+    {id:'w8r3',tag:'long',title:'Long Run',desc:'8 mi easy'}
+  ]},
+  { id:'w9', phase:'p1', label:'Week 9', dates:'Jul 31', miles:'20', runs:[
+    {id:'w9r1',tag:'vo2',title:'VO2max Intervals',desc:'6×4min @ hard, 2min jog rest'},
+    {id:'w9r2',tag:'z2',title:'Zone 2 Easy',desc:'5 mi easy'},
+    {id:'w9r3',tag:'long',title:'Long Run',desc:'11 mi easy'}
+  ]},
+  { id:'w10', phase:'p1', label:'Week 10', dates:'Aug 7', miles:'22', runs:[
+    {id:'w10r1',tag:'vo2',title:'VO2max Intervals',desc:'5×5min @ hard, 2.5min jog rest'},
+    {id:'w10r2',tag:'z2',title:'Zone 2 Easy',desc:'6 mi easy'},
+    {id:'w10r3',tag:'long',title:'Long Run',desc:'12 mi easy'}
+  ]},
+  { id:'w11', phase:'p1', label:'Week 11', dates:'Aug 14', miles:'24', runs:[
+    {id:'w11r1',tag:'vo2',title:'VO2max Intervals',desc:'6×5min @ hard, 2.5min jog rest'},
+    {id:'w11r2',tag:'z2',title:'Zone 2 Easy',desc:'6 mi easy'},
+    {id:'w11r3',tag:'long',title:'Long Run',desc:'13 mi easy'}
+  ]},
+  { id:'w12', phase:'p1', label:'Week 12 ↓ Cutback', dates:'Aug 21', miles:'20', runs:[
+    {id:'w12r1',tag:'z2',title:'Zone 2 Easy',desc:'5 mi easy · cutback week'},
+    {id:'w12r2',tag:'z2',title:'Zone 2 Easy',desc:'5 mi easy'},
+    {id:'w12r3',tag:'long',title:'Long Run',desc:'10 mi easy'}
+  ]},
+  { id:'w13', phase:'p1', label:'Week 13', dates:'Aug 28', miles:'25', runs:[
+    {id:'w13r1',tag:'vo2',title:'VO2max Intervals',desc:'6×5min @ hard, 2.5min rest'},
+    {id:'w13r2',tag:'z2',title:'Zone 2 Easy',desc:'6 mi easy'},
+    {id:'w13r3',tag:'long',title:'Long Run',desc:'14 mi easy'}
+  ]},
+  { id:'w14', phase:'p1', label:'Week 14 — Transition', dates:'Sep 4', miles:'20', runs:[
+    {id:'w14r1',tag:'z2',title:'Zone 2 Easy',desc:'5 mi easy'},
+    {id:'w14r2',tag:'z2',title:'Zone 2 Easy',desc:'5 mi easy'},
+    {id:'w14r3',tag:'long',title:'Long Run',desc:'10 mi easy'}
+  ]},
+  // Phase 2
+  { id:'w15', phase:'p2', label:'Week 15', dates:'Sep 8', miles:'30', runs:[
+    {id:'w15r1',tag:'vo2',title:'VO2max Intervals',desc:'5×5min hard, 2.5min rest'},
+    {id:'w15r2',tag:'z2',title:'Zone 2 Easy',desc:'6 mi easy'},
+    {id:'w15r3',tag:'long',title:'Long Run',desc:'15 mi easy'},
+    {id:'w15r4',tag:'z2',title:'Zone 2 Easy',desc:'5 mi easy (Wed or Fri)'}
+  ]},
+  { id:'w16', phase:'p2', label:'Week 16', dates:'Sep 15', miles:'33', runs:[
+    {id:'w16r1',tag:'tempo',title:'Tempo',desc:'2×15min @ MP+30s, 5min jog rest · w/u & c/d'},
+    {id:'w16r2',tag:'z2',title:'Zone 2 Easy',desc:'6 mi easy'},
+    {id:'w16r3',tag:'long',title:'Long Run',desc:'16 mi easy'},
+    {id:'w16r4',tag:'z2',title:'Zone 2 Easy',desc:'5 mi easy'}
+  ]},
+  { id:'w17', phase:'p2', label:'Week 17', dates:'Sep 22', miles:'35', runs:[
+    {id:'w17r1',tag:'vo2',title:'VO2max Intervals',desc:'6×5min hard, 2.5min rest'},
+    {id:'w17r2',tag:'z2',title:'Zone 2 Easy',desc:'7 mi easy'},
+    {id:'w17r3',tag:'long',title:'Long Run',desc:'17 mi easy'},
+    {id:'w17r4',tag:'z2',title:'Zone 2 Easy',desc:'5 mi easy · 6×20s strides'}
+  ]},
+  { id:'w18', phase:'p2', label:'Week 18 ↓ Cutback', dates:'Sep 29', miles:'28', runs:[
+    {id:'w18r1',tag:'z2',title:'Zone 2 Easy',desc:'6 mi easy · cutback week'},
+    {id:'w18r2',tag:'tempo',title:'Tempo',desc:'4 mi @ MP+30s continuous'},
+    {id:'w18r3',tag:'long',title:'Long Run',desc:'13 mi easy'},
+    {id:'w18r4',tag:'z2',title:'Zone 2 Easy',desc:'5 mi easy'}
+  ]},
+  { id:'w19', phase:'p2', label:'Week 19', dates:'Oct 6', miles:'38', runs:[
+    {id:'w19r1',tag:'vo2',title:'VO2max Intervals',desc:'7×5min hard, 2.5min rest'},
+    {id:'w19r2',tag:'z2',title:'Zone 2 Easy',desc:'7 mi easy'},
+    {id:'w19r3',tag:'long',title:'Long Run',desc:'18 mi — last 4 mi @ MP'},
+    {id:'w19r4',tag:'z2',title:'Zone 2 Easy',desc:'6 mi easy'}
+  ]},
+  { id:'w20', phase:'p2', label:'Week 20', dates:'Oct 13', miles:'40', runs:[
+    {id:'w20r1',tag:'tempo',title:'Tempo',desc:'3×20min @ MP+20s, 5min jog rest'},
+    {id:'w20r2',tag:'z2',title:'Zone 2 Easy',desc:'7 mi easy'},
+    {id:'w20r3',tag:'long',title:'Long Run',desc:'19 mi — last 5 mi @ MP'},
+    {id:'w20r4',tag:'z2',title:'Zone 2 Easy',desc:'6 mi easy · strides'}
+  ]},
+  { id:'w21', phase:'p2', label:'Week 21', dates:'Oct 20', miles:'42', runs:[
+    {id:'w21r1',tag:'vo2',title:'VO2max Intervals',desc:'8×5min hard — last big VO2 session'},
+    {id:'w21r2',tag:'z2',title:'Zone 2 Easy',desc:'8 mi easy'},
+    {id:'w21r3',tag:'long',title:'Long Run',desc:'20 mi — last 6 mi @ MP'},
+    {id:'w21r4',tag:'z2',title:'Zone 2 Easy',desc:'6 mi easy'}
+  ]},
+  { id:'w22', phase:'p2', label:'Week 22 ↓ Cutback', dates:'Oct 27', miles:'30', runs:[
+    {id:'w22r1',tag:'z2',title:'Zone 2 Easy',desc:'6 mi easy · cutback week'},
+    {id:'w22r2',tag:'tempo',title:'Tempo',desc:'5 mi @ MP+20s continuous'},
+    {id:'w22r3',tag:'long',title:'Long Run',desc:'14 mi easy'},
+    {id:'w22r4',tag:'z2',title:'Zone 2 Easy',desc:'5 mi easy'}
+  ]},
+  { id:'w23', phase:'p2', label:'Week 23 — PEAK', dates:'Nov 3', miles:'43', runs:[
+    {id:'w23r1',tag:'tempo',title:'Tempo',desc:'3×20min @ MP+10s — sharpening'},
+    {id:'w23r2',tag:'z2',title:'Zone 2 Easy',desc:'7 mi easy'},
+    {id:'w23r3',tag:'long',title:'Long Run ★ PEAK',desc:'22 mi easy — PEAK LONG RUN'},
+    {id:'w23r4',tag:'z2',title:'Zone 2 Easy',desc:'5 mi easy'}
+  ]},
+  { id:'w24', phase:'p2', label:'Week 24', dates:'Nov 10', miles:'35', runs:[
+    {id:'w24r1',tag:'tempo',title:'Tempo',desc:'2×20min @ MP, 5min jog rest'},
+    {id:'w24r2',tag:'z2',title:'Zone 2 Easy',desc:'6 mi easy'},
+    {id:'w24r3',tag:'long',title:'Long Run',desc:'16 mi — last 8 mi @ MP · final long stimulus'},
+    {id:'w24r4',tag:'z2',title:'Zone 2 Easy',desc:'5 mi easy'}
+  ]},
+  // Phase 3 - Taper
+  { id:'w25', phase:'p3', label:'Week 25 — Taper 1', dates:'Nov 17', miles:'26', runs:[
+    {id:'w25r1',tag:'tempo',title:'Tempo',desc:'3×10min @ MP, 4min rest · w/u+c/d'},
+    {id:'w25r2',tag:'z2',title:'Zone 2 Easy',desc:'5 mi easy'},
+    {id:'w25r3',tag:'long',title:'Long Run',desc:'13 mi — last 4 mi @ MP'},
+    {id:'w25r4',tag:'z2',title:'Zone 2 Easy',desc:'4 mi easy · 6×20s strides'}
+  ]},
+  { id:'w26', phase:'p3', label:'Week 26 — Taper 2', dates:'Nov 24', miles:'23', runs:[
+    {id:'w26r1',tag:'tempo',title:'Tempo',desc:'2×12min @ MP, 4min jog rest'},
+    {id:'w26r2',tag:'z2',title:'Zone 2 Easy',desc:'5 mi easy · strides'},
+    {id:'w26r3',tag:'long',title:'Long Run',desc:'10 mi easy — Thanksgiving week, keep it chill'},
+    {id:'w26r4',tag:'z2',title:'Zone 2 Easy',desc:'4 mi easy'}
+  ]},
+  { id:'w27', phase:'p3', label:'Week 27 — Taper 3', dates:'Dec 1', miles:'14', runs:[
+    {id:'w27r1',tag:'tempo',title:'Tempo',desc:'2×8min @ MP, 3min jog rest'},
+    {id:'w27r2',tag:'z2',title:'Zone 2 Easy',desc:'4 mi easy · strides'},
+    {id:'w27r3',tag:'z2',title:'Zone 2 Easy',desc:'3 mi easy shakeout'},
+    {id:'w27r4',tag:'rest',title:'Rest',desc:'Off · legs up, hydrate, carb load starts'}
+  ]},
+  { id:'w28', phase:'p3', label:'Race Week', dates:'Dec 9–13', miles:'26.2', runs:[
+    {id:'w28r1',tag:'z2',title:'Zone 2 Easy',desc:'Mon: 3 mi easy · nothing heroic'},
+    {id:'w28r2',tag:'strides',title:'Strides',desc:'Tue: 2 mi + 4×20s strides · last workout'},
+    {id:'w28r3',tag:'rest',title:'Rest',desc:'Wed–Fri: off · sleep, eat, hydrate · legs up Fri'},
+    {id:'w28r4',tag:'race',title:'RACE DAY 🏁',desc:'Dec 13 · Goal: sub-3:30 · Start 15s/mi slow, trust the build'}
+  ]}
+];
+
+const PACES = [
+  { zone:'Zone 2 Easy', color:'#3af0e8', val:'9:30–11:00', desc:'Fully conversational. If you can\'t hold a sentence, slow down. In Texas summer, this might feel embarrassingly slow — that\'s correct.' },
+  { zone:'Long Run', color:'#b47fff', val:'10:00–11:30', desc:'Same as Zone 2 or slower. Finish feeling like you could do 3 more miles. Never race your long runs.' },
+  { zone:'VO2max Intervals', color:'#e8ff3a', val:'7:00–7:30', desc:'Comfortably hard — 8/10 effort. Should be able to say 2–3 words. Recovery jog must be genuinely easy.' },
+  { zone:'Marathon Pace', color:'#ff6b35', val:'8:00/mi', desc:'Target race pace. Comfortably uncomfortable — 7/10. MP+20-30s = slightly easier for early sessions.' },
+  { zone:'Strides', color:'#ffc864', val:'6:30–7:00', desc:'20 sec, controlled acceleration. Not a full sprint. Full recovery between each. Keeps neuromuscular sharpness during taper.' },
+  { zone:'Race Day Start', color:'#e8ff3a', val:'8:15–8:20', desc:'First 5 miles SLOWER than goal pace. Non-negotiable. Miles 6–18 controlled. Save something for 18–22.' }
+];
+
+const SUPP = [
+  {
+    id:'stretch', icon:'🦵', title:'Daily Stretching', freq:'Every day · ~10 min · post-run or evening', color:'#3af0e8',
+    groups:[
+      { label:'Hips & Glutes', items:[
+        { name:'90/90 Hip Stretch', detail:'90s each side · front leg at 90°, rear leg at 90° — sink into it. Best hip opener for runners.' },
+        { name:'Pigeon Pose (or Figure-4)', detail:'60–90s each side · targets piriformis and external rotators. Use figure-4 on back if pigeon is too aggressive.' },
+        { name:'Hip Flexor Lunge Stretch', detail:'60s each side · rear knee on ground, drive hips forward. Running tightens hip flexors every single run.' }
+      ]},
+      { label:'Hamstrings & Calves', items:[
+        { name:'Standing Single-Leg Hamstring', detail:'45s each side · foot on surface at hip height, hinge at hips not waist. Don\'t round the spine.' },
+        { name:'Calf / Gastroc Stretch', detail:'60s each side · heel drop off step. Do both straight-leg (gastroc) and bent-knee (soleus) versions.' },
+        { name:'Downward Dog Hold', detail:'45–60s · pedal heels alternately for 10 reps then hold. Hits calves, hamstrings, thoracic spine.' }
+      ]},
+      { label:'IT Band & Quads', items:[
+        { name:'Standing Quad Stretch', detail:'45s each side · pull heel to glute, keep knees together. Don\'t let the hip rotate open.' },
+        { name:'Side-Lying IT Band Stretch', detail:'60s each side · cross top leg behind, let hip drop to floor. IT band issues are common at 15+ miles.' }
+      ]}
+    ],
+    note:'Post-run only — never stretch cold muscles. Dynamic warm-up before, static after.'
+  },
+  {
+    id:'warmup', icon:'🔥', title:'Pre-Run Dynamic Warm-Up', freq:'Before every run · ~5 min · no static holds', color:'#ffc864',
+    groups:[
+      { label:'Movement Prep', items:[
+        { name:'Leg Swings — Forward/Back', detail:'10 each leg · hold wall, swing straight leg. Wakes up hip flexors and hamstrings dynamically.' },
+        { name:'Leg Swings — Side to Side', detail:'10 each leg · opens hip abductors and adductors. Critical before long runs and VO2 days.' },
+        { name:'Walking Lunges with Rotation', detail:'10 reps · lunge forward, rotate torso toward front leg. Hip flexor activation + thoracic mobility.' },
+        { name:'High Knees (slow, controlled)', detail:'20 steps · deliberately drive knee to 90°. Focus on hip flexor activation, not cardio.' },
+        { name:'Butt Kicks', detail:'20 steps · heel to glute, keep hips forward. Fires hamstrings and establishes running mechanics.' },
+        { name:'Ankle Circles + Calf Raises', detail:'10 circles each direction, 10 raises · neglected but important especially on long run days.' }
+      ]}
+    ],
+    note:'Start your run at easy pace for first 5 min before hitting target effort — even on interval days.'
+  },
+  {
+    id:'strength', icon:'💪', title:'Bodyweight Strength', freq:'2x per week · ~20 min · not on long run days', color:'#ff6b35',
+    groups:[
+      { label:'Glute & Hip Stability (every session)', items:[
+        { name:'Single-Leg Glute Bridge', detail:'3×12 each side · lie on back, one foot on floor. Drive hip to ceiling. Prevents knee tracking issues at fatigue.' },
+        { name:'Clamshells', detail:'3×15 each side · band optional. External hip rotation = #1 injury preventer for runners.' },
+        { name:'Side-Lying Hip Abduction', detail:'3×15 each side · slow and controlled. Weak glute med = IT band + knee pain at mile 18+.' }
+      ]},
+      { label:'Calf & Achilles (critical for marathon)', items:[
+        { name:'Single-Leg Calf Raises', detail:'3×15 each leg · off step edge, full ROM. Slow down phase 3 sec. Build to 3×25 by October.' },
+        { name:'Bent-Knee Calf Raises (Soleus)', detail:'3×12 each leg · knee bent 30°. Targets soleus/Achilles specifically. Don\'t skip this one.' }
+      ]},
+      { label:'Core & Stability (alternate sessions)', items:[
+        { name:'Dead Bug', detail:'3×8 each side · slow, controlled, lower back flat. Best core exercise for runners — anti-rotation stability.' },
+        { name:'Side Plank', detail:'3×30–45s each side · elbow or hand. Add hip dips in Phase 2. Lateral core = posture at mile 22.' },
+        { name:'Single-Leg RDL (bodyweight)', detail:'3×10 each leg · hinge at hip, free leg behind. Posterior chain balance under load.' },
+        { name:'Step-Ups (high box)', detail:'3×10 each leg · drive through heel. Replicates single-leg propulsion mechanics of running.' }
+      ]}
+    ],
+    note:'Phase 1: 2 sets. Phase 2: 3 sets, add difficulty. Taper: 1x/week, 2 sets, lighter.'
+  },
+  {
+    id:'recovery', icon:'🛌', title:'Recovery Protocols', freq:'Ongoing · non-negotiable for sub-3:30', color:'#b47fff',
+    groups:[
+      { label:'Sleep (highest ROI)', items:[
+        { name:'8+ hrs during heavy training', detail:'Sleep is when adaptation happens. Cutting sleep to fit mileage is a net negative.' },
+        { name:'Consistent sleep/wake time', detail:'More impactful than total hours. Texas summer early runs = go to bed earlier, not stay up later.' }
+      ]},
+      { label:'Post-Run Nutrition', items:[
+        { name:'Within 30 min of finishing', detail:'3:1 or 4:1 carb:protein ratio. Chocolate milk is genuinely solid. For 12+ mile runs this is non-negotiable.' },
+        { name:'Electrolytes on 60+ min runs', detail:'Central Texas sweat rates are high. Water alone isn\'t enough past an hour. LMNT, Nuun, or similar.' }
+      ]},
+      { label:'Soft Tissue Work', items:[
+        { name:'Foam Rolling 3–4x/week', detail:'IT band, calves, quads, upper back. Slow passes, 60s per area. Not a replacement for stretching.' },
+        { name:'Massage gun / lacrosse ball', detail:'Feet and plantar fascia nightly at high mileage. Glutes/piriformis with lacrosse ball after long runs.' }
+      ]},
+      { label:'Injury Watch', items:[
+        { name:'Don\'t run through these', detail:'Sharp pain, pain that worsens mid-run, localized bone pain, limping after. 2 easy days < 2 weeks off.' },
+        { name:'Soreness vs. injury', detail:'Muscle soreness 24–48hrs = normal. Pain mid-run that shifts your gait = back off immediately.' }
+      ]}
+    ],
+    note:'Week after 20+ mile runs: extra sleep, extra food, no strength work. Recovery mode, not maintenance.'
+  }
+];
+
+// ─────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────
+const STORAGE_KEY = 'marathon_tracker_v1';
+
+function loadState() {
+  try {
+    const s = localStorage.getItem(STORAGE_KEY);
+    return s ? JSON.parse(s) : { done: {}, openWeeks: {}, openSupp: {} };
+  } catch { return { done: {}, openWeeks: {}, openSupp: {} }; }
+}
+
+function saveState(s) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch {}
+}
+
+let STATE = loadState();
+
+// ─────────────────────────────────────────────
+// HELPERS
+// ─────────────────────────────────────────────
+function totalRuns() { return WEEKS.reduce((a,w) => a + w.runs.length, 0); }
+function completedRuns() { return Object.values(STATE.done).filter(Boolean).length; }
+function weekDone(w) { return w.runs.every(r => STATE.done[r.id]); }
+function weekProgress(w) { return w.runs.filter(r => STATE.done[r.id]).length; }
+
+function currentWeek() {
+  const now = new Date();
+  for (const w of WEEKS) {
+    const wDate = parseWeekDate(w.dates);
+    const nextW = WEEKS[WEEKS.indexOf(w)+1];
+    const nextDate = nextW ? parseWeekDate(nextW.dates) : RACE_DATE;
+    if (now >= wDate && now < nextDate) return w;
+  }
+  return WEEKS[0];
+}
+
+function parseWeekDate(str) {
+  const months = {Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
+  const m = str.match(/([A-Za-z]+)\s+(\d+)/);
+  if (!m) return new Date('2025-06-05');
+  return new Date(2025, months[m[1]], parseInt(m[2]));
+}
+
+function daysToRace() {
+  const now = new Date();
+  const diff = Math.ceil((RACE_DATE - now) / (1000*60*60*24));
+  return Math.max(0, diff);
+}
+
+function weekStreak() {
+  let streak = 0;
+  for (let i = WEEKS.length-1; i >= 0; i--) {
+    if (weekDone(WEEKS[i])) streak++;
+    else break;
+  }
+  return streak;
+}
+
+// ─────────────────────────────────────────────
+// RENDER
+// ─────────────────────────────────────────────
+let currentTab = 'dashboard';
+
+function render() {
+  document.getElementById('countdown').textContent = daysToRace();
+  const total = totalRuns();
+  const comp = completedRuns();
+  const pct = total ? Math.round((comp/total)*100) : 0;
+  document.getElementById('masterFill').style.width = pct + '%';
+  document.getElementById('masterLabel').textContent = `${comp} / ${total} runs · ${pct}%`;
+
+  const area = document.getElementById('scrollArea');
+  if (currentTab === 'dashboard') area.innerHTML = renderDashboard();
+  else if (currentTab === 'plan') area.innerHTML = renderPlan();
+  else if (currentTab === 'pacing') area.innerHTML = renderPacing();
+  else if (currentTab === 'supplemental') area.innerHTML = renderSupp();
+
+  bindEvents();
+}
+
+function renderDashboard() {
+  const cur = currentWeek();
+  const comp = completedRuns();
+  const total = totalRuns();
+  const wComp = WEEKS.filter(weekDone).length;
+  const pct = total ? Math.round((comp/total)*100) : 0;
+  const streak = weekStreak();
+
+  // Miles logged
+  let milesLogged = 0;
+  WEEKS.forEach(w => {
+    const doneCount = weekProgress(w);
+    const totalR = w.runs.length;
+    if (totalR > 0) milesLogged += (doneCount / totalR) * parseFloat(w.miles);
+  });
+
+  return `
+    <div class="dash-grid">
+      <div class="dash-stat">
+        <div class="dash-stat-label">Runs Done</div>
+        <div class="dash-stat-value" style="color:var(--accent)">${comp}</div>
+        <div class="dash-stat-sub">of ${total} total</div>
+      </div>
+      <div class="dash-stat">
+        <div class="dash-stat-label">Plan Progress</div>
+        <div class="dash-stat-value" style="color:var(--z2)">${pct}%</div>
+        <div class="dash-stat-sub">${wComp} weeks complete</div>
+      </div>
+      <div class="dash-stat">
+        <div class="dash-stat-label">Est. Miles Logged</div>
+        <div class="dash-stat-value" style="color:var(--long)">${Math.round(milesLogged)}</div>
+        <div class="dash-stat-sub">of ~590 planned</div>
+      </div>
+      <div class="dash-stat">
+        <div class="dash-stat-label">Days to Race</div>
+        <div class="dash-stat-value" style="color:var(--tempo)">${daysToRace()}</div>
+        <div class="dash-stat-sub">Dec 13, 2025</div>
+      </div>
+    </div>
+
+    <div class="current-week-card">
+      <div class="cwc-label">Current Week</div>
+      <div class="cwc-title">${cur.label} · ${cur.dates}</div>
+      <div class="cwc-runs">${cur.runs.map(r => `${r.title}: ${r.desc}`).join('<br>')}</div>
+    </div>
+
+    ${streak > 0 ? `
+    <div class="streak-card">
+      <div class="streak-num">${streak}</div>
+      <div class="streak-right">
+        <div class="streak-title">Week Streak 🔥</div>
+        <div class="streak-sub">consecutive complete weeks</div>
+      </div>
+    </div>` : ''}
+
+    <div style="padding:0 12px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.12em;color:var(--muted);text-transform:uppercase;margin-bottom:8px">Phase Progress</div>
+      ${PHASES.map(p => {
+        const pWeeks = WEEKS.filter(w => w.phase === p.id);
+        const pDone = pWeeks.filter(weekDone).length;
+        const pPct = pWeeks.length ? Math.round((pDone/pWeeks.length)*100) : 0;
+        return `
+        <div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+            <div style="font-size:12px;color:${p.color};font-family:'IBM Plex Mono',monospace;font-size:11px">${p.label.split('—')[1]?.trim() || p.label}</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted)">${pDone}/${pWeeks.length} wks</div>
+          </div>
+          <div style="height:4px;background:var(--border);border-radius:2px;overflow:hidden">
+            <div style="height:100%;width:${pPct}%;background:${p.color};border-radius:2px;transition:width 0.4s"></div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+
+    <div class="reset-wrap">
+      <button class="reset-btn" id="resetBtn">⚠ Reset All Progress</button>
+    </div>
+  `;
+}
+
+function renderPlan() {
+  let html = '';
+  let curPhase = null;
+
+  WEEKS.forEach(w => {
+    if (w.phase !== curPhase) {
+      curPhase = w.phase;
+      const p = PHASES.find(x => x.id === curPhase);
+      html += `
+        <div class="phase-label" style="color:${p.color}">
+          ${p.label}
+          <span class="phase-badge-sm" style="background:${p.color}18;color:${p.color}">${p.badge}</span>
+        </div>
+        <div style="padding:0 12px;margin-bottom:10px">
+          <div class="phase-desc" style="font-size:12px;color:var(--muted);font-style:italic">${p.desc}</div>
+        </div>`;
+    }
+
+    const done = weekDone(w);
+    const prog = weekProgress(w);
+    const isOpen = STATE.openWeeks[w.id];
+    const isCurrent = currentWeek().id === w.id;
+
+    html += `
+      <div class="week-card ${done?'complete':''} ${isCurrent&&!done?'active':''} ${isOpen?'open':''}" data-week="${w.id}">
+        <div class="week-header" data-toggle="week" data-id="${w.id}">
+          <div class="week-header-left">
+            <div class="week-num-badge">${w.id.toUpperCase()}</div>
+            <div class="week-title-wrap">
+              <div class="week-title">${w.label}${isCurrent&&!done?' ← NOW':''}</div>
+              <div class="week-dates-sm">${w.dates} · ${w.miles} mi</div>
+            </div>
+          </div>
+          <div class="week-right">
+            <div class="week-progress-dots">
+              ${w.runs.map(r => `<div class="wdot ${STATE.done[r.id]?'done':''}"></div>`).join('')}
+            </div>
+            <div class="chevron">▼</div>
+          </div>
+        </div>
+        <div class="week-body">
+          ${w.runs.map(r => `
+            <div class="run-item ${STATE.done[r.id]?'done':''}" data-run="${r.id}">
+              <div class="run-check">
+                <span class="run-check-icon">✓</span>
+              </div>
+              <div class="run-content">
+                <span class="run-tag-sm rtag-${r.tag}">${r.tag}</span>
+                <div class="run-title-sm">${r.title}</div>
+                <div class="run-desc-sm">${r.desc}</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>`;
+  });
+
+  return html;
+}
+
+function renderPacing() {
+  return `<div class="pace-section">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.1em;margin-bottom:12px">
+      SUB-3:30 = ~8:00/MILE · PACE BY EFFORT IN TEXAS SUMMER
+    </div>
+    ${PACES.map(p => `
+      <div class="pace-card">
+        <div class="pace-zone-label" style="color:${p.color}">${p.zone}</div>
+        <div class="pace-val" style="color:${p.color}">${p.val}</div>
+        <div class="pace-desc-text">${p.desc}</div>
+      </div>
+    `).join('')}
+  </div>`;
+}
+
+function renderSupp() {
+  return `<div class="supp-section">
+    ${SUPP.map(s => `
+      <div class="supp-card-m ${STATE.openSupp[s.id]?'open':''}" data-supp="${s.id}">
+        <div class="supp-head-m" style="border-color:${s.color}" data-toggle="supp" data-id="${s.id}">
+          <span class="supp-icon-m">${s.icon}</span>
+          <div>
+            <div class="supp-title-m">${s.title}</div>
+            <div class="supp-freq-m">${s.freq}</div>
+          </div>
+          <span class="supp-chevron">▼</span>
+        </div>
+        <div class="supp-body-m">
+          ${s.groups.map(g => `
+            <div class="supp-group-m">
+              <div class="supp-group-label-m" style="color:${s.color}">${g.label}</div>
+              ${g.items.map(i => `
+                <div class="ex-item">
+                  <div class="ex-name-m">${i.name}</div>
+                  <div class="ex-detail-m">${i.detail}</div>
+                </div>
+              `).join('')}
+            </div>
+          `).join('')}
+          <div class="supp-note-m">⚡ ${s.note}</div>
+        </div>
+      </div>
+    `).join('')}
+  </div>`;
+}
+
+// ─────────────────────────────────────────────
+// EVENTS
+// ─────────────────────────────────────────────
+function bindEvents() {
+  // Tabs
+  document.querySelectorAll('.tab').forEach(t => {
+    t.onclick = () => {
+      currentTab = t.dataset.tab;
+      document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      render();
+      document.getElementById('scrollArea').scrollTop = 0;
+    };
+  });
+
+  // Week toggles
+  document.querySelectorAll('[data-toggle="week"]').forEach(el => {
+    el.onclick = () => {
+      const id = el.dataset.id;
+      STATE.openWeeks[id] = !STATE.openWeeks[id];
+      saveState(STATE);
+      render();
+    };
+  });
+
+  // Run checkboxes
+  document.querySelectorAll('[data-run]').forEach(el => {
+    el.onclick = (e) => {
+      e.stopPropagation();
+      const id = el.dataset.run;
+      STATE.done[id] = !STATE.done[id];
+      saveState(STATE);
+      render();
+    };
+  });
+
+  // Supp toggles
+  document.querySelectorAll('[data-toggle="supp"]').forEach(el => {
+    el.onclick = () => {
+      const id = el.dataset.id;
+      STATE.openSupp[id] = !STATE.openSupp[id];
+      saveState(STATE);
+      render();
+    };
+  });
+
+  // Reset
+  const rb = document.getElementById('resetBtn');
+  if (rb) rb.onclick = () => {
+    if (confirm('Reset all progress? This cannot be undone.')) {
+      STATE = { done: {}, openWeeks: {}, openSupp: {} };
+      saveState(STATE);
+      render();
+    }
+  };
+}
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+render();
+
+// Register service worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>
